@@ -3,7 +3,9 @@ Qt historically worked in physical pixels. A button sized at 100x30 pixels looks
 
 The Modern Fix — Enable High DPI Scaling
 In Qt 6 high DPI scaling is enabled automatically by default, so if you're on Qt 6 this is largely handled for you. In Qt 5.6+ you need to opt in explicitly, before the QApplication is constructed:
-cpp#include <QApplication>
+cpp
+
+#include <QApplication>
 
 int main(int argc, char *argv[]) {
     // Qt 5 — must be set before QApplication
@@ -17,6 +19,7 @@ In Qt 6 these attributes are deprecated because scaling is on by default — you
 
 DPI Scale Factor Rounding
 By default Qt rounds the scale factor to the nearest whole number (1x, 2x, 3x). On a screen that's 1.5x DPI this can still cause layout issues. You can allow fractional scaling:
+
 cpp// Qt 5
 QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
@@ -28,7 +31,12 @@ QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
     Qt::HighDpiScaleFactorRoundingPolicy::PassThrough
 );
 The rounding policy options are:
-PolicyBehaviourRoundRounds to nearest integer (default in Qt 5)CeilAlways rounds upFloorAlways rounds downRoundPreferFloorRounds to nearest, preferring floor at 0.5PassThroughUses exact fractional scale factor
+PolicyBehaviour
+Round Rounds to nearest integer (default in Qt 5)
+Ceil Always rounds up
+Floor Always rounds down
+RoundPreferFloor Rounds to nearest, preferring floor at 0.5
+PassThroughUses exact fractional scale factor
 PassThrough gives the most accurate results but can cause slightly blurry rendering on some platforms since pixels no longer align perfectly.
 
 Use Layouts, Not Fixed Sizes
@@ -44,6 +52,7 @@ When you use layouts properly, Qt calculates widget sizes based on font metrics 
 
 Use em-relative Sizing When You Must Set Sizes
 If you genuinely need to set a size (minimum widths, icon sizes etc.), scale relative to the font size rather than hardcoding pixels. The font is already DPI-aware:
+
 cpp// Get the current font height in pixels — already DPI scaled
 int em = QFontMetrics(QApplication::font()).height();
 
