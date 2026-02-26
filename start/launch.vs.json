@@ -1,0 +1,13 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "UIViewer.exe",
+      "name": "UIViewer.exe",
+      "args": [ "C:/path/to/your/form.ui" ]
+    }
+  ]
+}
