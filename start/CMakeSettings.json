@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Visual Studio 17 2022",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "variables": [
+        {
+          "name": "CMAKE_PREFIX_PATH",
+          "value": "C:/Qt/6.7.2/msvc2022_64",
+          "type": "PATH"
+        }
+      ]
+    }
+  ]
+}
