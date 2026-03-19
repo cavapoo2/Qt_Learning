@@ -110,28 +110,6 @@ void MainWindow::applyFilter()
 }
 
 
-void MainWindow::setupCheckboxes()
-{
-    // In a real UI with 128 faults this would be a QListWidget
-    // with checkable items rather than raw QCheckBoxes
-    auto* row = new QHBoxLayout();
-
-    for (const auto& fd : m_faultDefs) {
-        auto* cb = new QCheckBox(fd.bitName);
-        cb->setChecked(fd.visible);
-        m_checkboxes[fd.index] = cb;
-
-        connect(cb, &QCheckBox::toggled, this, [this](bool) {
-            applyFilter();
-        });
-        row->addWidget(cb);
-    }
-
-    auto* layout = qobject_cast<QVBoxLayout*>(centralWidget()->layout());
-    layout->addLayout(row);
-}
-
-
 void MainWindow::setupStateCheckboxes()
 {
     auto* row = new QHBoxLayout();
