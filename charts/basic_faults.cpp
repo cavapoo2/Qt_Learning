@@ -1,5 +1,10 @@
 // Header
 private:
+    QCheckBox* m_cbCritical    = nullptr;
+    QCheckBox* m_cbDegradable  = nullptr;
+    QCheckBox* m_cbServiceable = nullptr;
+    QCheckBox* m_cbNoFault     = nullptr;
+
     struct FaultDefinition {
         int         index;        // 0-127, fixed Y position
         QString     bitName;      // label on Y axis
@@ -104,73 +109,6 @@ void MainWindow::applyFilter()
     rebuildYAxis();
 }
 
-void MainWindow::rebuildSeriesPoints()
-{
-    m_seriesNone->clear();
-    m_seriesCritical->clear();
-    m_seriesDegradable->clear();
-    m_seriesServiceable->clear();
-
-    // Build a set of visible fault indices from checkboxes
-    QSet<int> visible;
-    for (const auto& fd : m_faultDefs)
-        if (m_checkboxes.contains(fd.index) &&
-            m_checkboxes[fd.index]->isChecked())
-            visible.insert(fd.index);
-
-    for (const auto& ev : m_events) {
-        if (!visible.contains(ev.faultIndex))
-            continue;
-
-        // Y is always the fixed fault index — no remapping
-        qreal y = ev.faultIndex;
-
-        switch (ev.state) {
-            case NoFault:    m_seriesNone->append(ev.timestamp, y);        break;
-            case Critical:   m_seriesCritical->append(ev.timestamp, y);    break;
-            case Degradable: m_seriesDegradable->append(ev.timestamp, y);  break;
-            case Serviceable:m_seriesServiceable->append(ev.timestamp, y); break;
-        }
-    }
-}
-
-void MainWindow::rebuildYAxis()
-{
-    for (auto* s : {m_seriesNone, m_seriesCritical,
-                    m_seriesDegradable, m_seriesServiceable})
-        s->detachAxis(m_axisY);
-
-    m_chart->removeAxis(m_axisY);
-    m_axisY->deleteLater();
-
-    m_axisY = new QCategoryAxis();
-    m_axisY->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
-
-    // Collect visible faults, sorted by index so axis labels go in order
-    QList<FaultDefinition> visibleFaults;
-    for (const auto& fd : m_faultDefs)
-        if (m_checkboxes.contains(fd.index) &&
-            m_checkboxes[fd.index]->isChecked())
-            visibleFaults.append(fd);
-
-    if (visibleFaults.isEmpty()) {
-        m_axisY->setMin(0);
-        m_axisY->setMax(127);
-    } else {
-        // Pad half a unit above and below outermost visible rows
-        m_axisY->setMin(visibleFaults.first().index - 0.5);
-        m_axisY->setMax(visibleFaults.last().index  + 0.5);
-
-        for (const auto& fd : visibleFaults)
-            m_axisY->append(fd.bitName, fd.index);
-    }
-
-    m_chart->addAxis(m_axisY, Qt::AlignLeft);
-
-    for (auto* s : {m_seriesNone, m_seriesCritical,
-                    m_seriesDegradable, m_seriesServiceable})
-        s->attachAxis(m_axisY);
-}
 
 void MainWindow::setupCheckboxes()
 {
@@ -193,14 +131,6 @@ void MainWindow::setupCheckboxes()
     layout->addLayout(row);
 }
 
-
-small change
-// Header additions
-private:
-    QCheckBox* m_cbCritical    = nullptr;
-    QCheckBox* m_cbDegradable  = nullptr;
-    QCheckBox* m_cbServiceable = nullptr;
-    QCheckBox* m_cbNoFault     = nullptr;
 
 void MainWindow::setupStateCheckboxes()
 {
